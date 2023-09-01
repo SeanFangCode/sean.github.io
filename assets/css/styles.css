@@ -17,6 +17,7 @@ img {
     height: auto;
     background-color: #eeebe0;
     flex-direction: row;
+    box-sizing: border-box;
 }
 .section{
     background-color: #eeebe0;
@@ -26,34 +27,33 @@ img {
     display: flex;
 }
 .background-text{
-    width: auto;
-    padding: 0px 180px;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    padding: 100px 180px;
     flex-direction: column;
     display: flex;
+    box-sizing: border-box;
 }
 .heading{
     color:#292929;
     white-space: nowrap;
     text-align: left;
-    align-self: flex-start;
-    margin-left: 0px 30px;
-    font-size: 50px;
+    margin: 15px 30px;
+    font-size: 3.2vw;
     font-weight: 800;
-    line-height: 70px;
+    line-height: 3.2vw;
     display: flex;
+    box-sizing: border-box;
 }
 .sub{
     color:#292929;
     white-space: nowrap;
     text-align: left;
-    align-self: flex-start;
-    margin: 0px 30px;
-    font-size: 25px;
+    margin: 15px 30px;
+    font-size: 1.6vw;
     font-weight: 600;
-    line-height: 25px;
+    line-height: 1.6vw;
     display: flex;
+    box-sizing: border-box;
 }
 .nav-menu{
     width: 100%;
@@ -62,14 +62,14 @@ img {
     align-items: center;
     padding: 25px 180px;
     display: flex;
+    box-sizing: border-box;
 }
 .nav-link{
     color:#292929;
     padding: 0 20px 0 0;
     font-style: normal;
-    font-size: 25px;
+    font-size: 1.8vw;
     font-weight: 300;
-    line-height: 25px;
     text-decoration: none;
 }
 .grid-layout{
@@ -113,24 +113,12 @@ img {
                    / 1fr 1fr 1fr 1fr 1fr 1fr;               
 }
 .image{
-    max-height: 100;
+    max-height: 100%;
     max-width: 100%;
 }
 @media (max-width: 991px){
     .background-text{
         padding: 0px 90px;
-    }
-    .heading{
-        font-size: 40px;
-        line-height: 60px;
-    }
-    .sub{
-        font-size: 20px;
-        line-height: 20px;
-    }
-    .nav-link{
-        font-size: 15px;
-        line-height: 15px;
     }
     .nav-menu{
         padding: 25px 90px;
@@ -142,18 +130,6 @@ img {
 @media (max-width: 767px){
     .background-text{
         padding: 0px 60px;
-    }
-    .heading{
-        font-size: 25px;
-        line-height: 50px;
-    }
-    .sub{
-        font-size: 10px;
-        line-height: 10px;
-    }
-    .nav-link{
-        font-size: 10px;
-        line-height: 10px;
     }
     .nav-menu{
         padding: 25px 60px;
@@ -171,10 +147,6 @@ img {
 @media (max-width: 479px){
     .background-text{
         padding: 0px 30px;
-    }
-    .heading{
-        font-size: 20px;
-        line-height: 40px;
     }
     .nav-menu{
         padding: 25px 30px;
