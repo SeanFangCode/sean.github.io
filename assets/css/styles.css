@@ -37,7 +37,7 @@ img {
     color:#292929;
     white-space: nowrap;
     text-align: left;
-    margin: 15px 30px;
+    margin: 15px 0px;
     font-size: 3.2vw;
     font-weight: 800;
     line-height: 3.2vw;
@@ -48,7 +48,7 @@ img {
     color:#292929;
     white-space: nowrap;
     text-align: left;
-    margin: 15px 30px;
+    margin: 15px 45px;
     font-size: 1.6vw;
     font-weight: 600;
     line-height: 1.6vw;
@@ -66,6 +66,7 @@ img {
 }
 .nav-link{
     color:#292929;
+    font-family: "CorporateS-Light"; 
     padding: 0 20px 0 0;
     font-style: normal;
     font-size: 1.8vw;
