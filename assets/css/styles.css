@@ -18,6 +18,7 @@ img {
     background-color: #eeebe0;
     flex-direction: row;
     box-sizing: border-box;
+    position: sticky; top: 0;
 }
 .section{
     background-color: #eeebe0;
@@ -26,9 +27,34 @@ img {
     align-items: flex-start;
     display: flex;
 }
+
 .background-text{
     width: 100%;
-    padding: 100px 180px;
+    padding: 15px 180px;
+    flex-direction: column;
+    display: flex;
+    box-sizing: border-box;
+}
+.about-me{
+    width: 100%;
+    padding: 15px 180px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    box-sizing: border-box;
+}
+.self-image{
+    padding: 0px 15px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    box-sizing: border-box;
+}
+.description-text{
+    width: 100%;
+    padding: 0px 15px;
     flex-direction: column;
     display: flex;
     box-sizing: border-box;
@@ -48,10 +74,34 @@ img {
     color:#292929;
     white-space: nowrap;
     text-align: left;
-    margin: 15px 45px;
+    margin: 15px 0px;
     font-size: 1.6vw;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.6vw;
+    display: flex;
+    box-sizing: border-box;
+}
+.about{
+    color:#292929;
+    white-space: pre-line;
+    align-self: left;
+    text-align: left;
+    margin: 15px 10px;
+    font-size: 1.2vw;
+    font-weight: 500;
+    line-height: 1.2vw;
+    display: flex;
+    box-sizing: border-box;
+}
+.title{
+    color:#292929;
+    white-space: pre-line;
+    align-self: center;
+    text-align: left;
+    margin: 15px 10px;
+    font-size: 3.2vw;
+    font-weight: 700;
+    line-height: 3.2vw;
     display: flex;
     box-sizing: border-box;
 }
@@ -66,11 +116,10 @@ img {
 }
 .nav-link{
     color:#292929;
-    font-family: "CorporateS-Light"; 
-    padding: 0 20px 0 0;
+    padding: 0 30px 0 0;
     font-style: normal;
-    font-size: 1.8vw;
-    font-weight: 300;
+    font-size: 1.2vw;
+    font-weight: 700;
     text-decoration: none;
 }
 .grid-layout{
@@ -111,6 +160,12 @@ img {
                    "R8-P1 R8-P1 R9-P1 R9-P1 R9-P1 R9-P1"
                    "R10-P1 R10-P1 R10-P2 R10-P2 R10-P3 R10-P3"
                    "R10-P1 R10-P1 R10-P2 R10-P2 R10-P3 R10-P3"
+                   "R12-P1 R12-P1 R12-P1 R12-P1 R12-P1 R12-P1"
+                   "R13-P1 R13-P1 R13-P2 R13-P2 R13-P3 R13-P3"
+                   "R13-P1 R13-P1 R13-P2 R13-P2 R13-P3 R13-P3"
+                   "R15-P1 R15-P1 R15-P2 R15-P2 R15-P3 R15-P3"
+                   "R16-P1 R16-P1 R16-P1 R16-P1 R15-P3 R15-P3"
+                   "R17-P1 R17-P1 R17-P2 R17-P2 R17-P3 R17-P3"
                    / 1fr 1fr 1fr 1fr 1fr 1fr;               
 }
 .image{
@@ -119,7 +174,10 @@ img {
 }
 @media (max-width: 991px){
     .background-text{
-        padding: 0px 90px;
+        padding: 15px 90px;
+    }
+    .about-me{
+        padding: 15px 90px;
     }
     .nav-menu{
         padding: 25px 90px;
@@ -130,7 +188,10 @@ img {
 }
 @media (max-width: 767px){
     .background-text{
-        padding: 0px 60px;
+        padding: 15px 60px;
+    }
+    .about-me{
+        padding: 15px 60px;
     }
     .nav-menu{
         padding: 25px 60px;
@@ -147,7 +208,10 @@ img {
 }
 @media (max-width: 479px){
     .background-text{
-        padding: 0px 30px;
+        padding: 15px 30px;
+    }
+    .about-me{
+        padding: 15px 30px;
     }
     .nav-menu{
         padding: 25px 30px;
@@ -163,7 +227,9 @@ img {
     }
 }
 
-
+#node-3639{
+    width:20vw;
+}
 #master-node{
     grid-area: span 1 / span 2 / span 1 / span 2;
 }
@@ -221,9 +287,36 @@ img {
 #node-00421{
     grid-area: R10-P3;
 }
-
-
-  
-
-  
-  
+#node-01470{
+    grid-area: R12-P1;
+}
+#node-01251{
+    grid-area: R13-P1;
+}
+#node-01260{
+    grid-area: R13-P2;
+}
+#node-02119{
+    grid-area: R13-P3;
+}
+#node-00339{
+    grid-area: R15-P1;
+}
+#node-00875{
+    grid-area: R15-P2;
+}
+#node-00913{
+    grid-area: R15-P3;
+}
+#node-00859{
+    grid-area: R16-P1;
+}
+#node-00873{
+    grid-area: R17-P1;
+}
+#node-01219{
+    grid-area: R17-P2;
+}
+#node-01548{
+    grid-area: R17-P3;
+}
