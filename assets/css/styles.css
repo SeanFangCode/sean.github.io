@@ -166,6 +166,7 @@ img {
                    "R15-P1 R15-P1 R15-P2 R15-P2 R15-P3 R15-P3"
                    "R16-P1 R16-P1 R16-P1 R16-P1 R15-P3 R15-P3"
                    "R17-P1 R17-P1 R17-P2 R17-P2 R17-P3 R17-P3"
+                   "R18-P1 R18-P1 R18-P1 R18-P1 R18-P1 R18-P1"
                    / 1fr 1fr 1fr 1fr 1fr 1fr;               
 }
 .image{
@@ -319,4 +320,7 @@ img {
 }
 #node-01548{
     grid-area: R17-P3;
+}
+#node-00375{
+    grid-area: R18-P1;
 }
