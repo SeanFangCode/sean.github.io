@@ -205,7 +205,7 @@ img[alt="bkimg"]{
     display: flex;
     width: 400%; 
     height: 100%;
-    animation: slide 45s infinite;
+    animation: slide 47s infinite;
     will-change: transform; 
 }
 .background-img img, .background-img video{
