@@ -4,10 +4,39 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.text())
         .then(data => {
             // Insert the fetched content into the section-body div
-            document.querySelector('.section-body').innerHTML = data;
+            const sectionBody = document.querySelector('.section-body');
+            sectionBody.innerHTML = data;
+
+            // Dispatch a custom event to indicate content is loaded
+            const contentLoadedEvent = new Event('contentLoaded');
+            sectionBody.dispatchEvent(contentLoadedEvent);
         })
         .catch(error => console.error('Error loading content:', error));
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const video = document.getElementById("background-video");
+    const animationDuration = 47000; // Total animation duration in milliseconds
+    const videoDuration = 30000; // Video duration in milliseconds
+
+    setInterval(() => {
+        const currentTime = performance.now() % animationDuration; // Current time in the animation loop
+
+        if (currentTime <= videoDuration) {
+            // Play the video during the first 30 seconds
+            if (video.paused) video.play();
+        } else {
+            // Pause the video during the remaining 17 seconds
+            if (!video.paused) video.pause();
+        }
+
+        // Reset the video at the start of the animation loop
+        if (currentTime < 100) {
+            video.currentTime = 0;
+        }
+    }, 100); // Check and sync every 100ms
+});
+
+
 function loadSection(event) {
     event.preventDefault(); // Prevent the default link behavior
 
@@ -61,8 +90,8 @@ const coordinates = [
 ];
 
 const percentageTimings = [
-    { range: [0, 63.83], hold: true },      // Hold at 30s
-    { range: [63.83, 68.09], hold: false }, // Transition (2s)
+    { range: [0, 63.60], hold: true },      // Hold at 30s
+    { range: [63.60, 68.09], hold: false }, // Transition (2s)
     { range: [68.09, 74.47], hold: true },  // Hold (3s)
     { range: [74.47, 78.72], hold: false }, // Transition (2s)
     { range: [78.72, 85.11], hold: true },  // Hold (3s)
