@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Fetch the external HTML file content
     fetch('section-body.html')
         .then(response => response.text())
@@ -54,21 +54,23 @@ window.addEventListener('scroll', () => {
 });
 
 const coordinates = [
-    { lat: 53.2548, lng: 23.4781 }, // Coordinate 1
-    { lat: 41.1736, lng: -73.0998 }, // Coordinate 2
-    { lat: 41.2491, lng: -72.5436 }  // Coordinate 3
+    { lat: 41.8375, lng: -72.7891 }, // Coordinate 1
+    { lat: 53.2548, lng: 23.4781 }, // Coordinate 2
+    { lat: 41.1736, lng: -73.0998 }, // Coordinate 3
+    { lat: 41.2491, lng: -72.5436 }  // Coordinate 4
 ];
 
 const percentageTimings = [
-    { range: [0, 16], hold: true },   // Hold Coordinate 1
-    { range: [16, 32], hold: false }, // Transition to Coordinate 2
-    { range: [32, 48], hold: true },  // Hold Coordinate 2
-    { range: [48, 64], hold: false }, // Transition to Coordinate 3
-    { range: [64, 80], hold: true },  // Hold Coordinate 3
-    { range: [80, 100], hold: false } // Transition back to Coordinate 1
+    { range: [0, 63.83], hold: true },      // Hold at 30s
+    { range: [63.83, 68.09], hold: false }, // Transition (2s)
+    { range: [68.09, 74.47], hold: true },  // Hold (3s)
+    { range: [74.47, 78.72], hold: false }, // Transition (2s)
+    { range: [78.72, 85.11], hold: true },  // Hold (3s)
+    { range: [85.11, 89.36], hold: false }, // Transition (2s)
+    { range: [89.36, 95.74], hold: true },  // Hold (3s)
+    { range: [95.74, 100.00], hold: false } // Transition (2s)
 ];
-
-const totalDuration = 20000; // 20 seconds
+const totalDuration = 47000; // 20 seconds
 const subtextElement = document.querySelector('.subtext');
 let currentPhaseIndex = 0; // Tracks which phase (hold or transition) we're in
 
@@ -91,7 +93,7 @@ function updateCoordinates() {
         const startCoord = coordinates[currentIndex];
         const nextCoord = coordinates[nextIndex];
 
-        const steps = 25; // Increase for smoother transitions
+        const steps = 15; // Increase for smoother transitions
         const interval = phaseDuration / steps;
         let step = 0;
 
