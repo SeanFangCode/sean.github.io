@@ -266,6 +266,9 @@ img[alt="bkimg"]{
 .portfolio-button.second-year{
     text-align: right;
 }
+.portfolio-button.third-year{
+    text-align: left;
+}
 .portfolio-button::after{
     border-radius: 5rem;
     content: '';
@@ -287,6 +290,9 @@ img[alt="bkimg"]{
     transform: translateX(100%);
 }
 .portfolio-button.second-year:hover::after{
+    transform: translateX(100%);
+}
+.portfolio-button.third-year:hover::after{
     transform: translateX(100%);
 }
 .portfolio-button:hover {
@@ -313,10 +319,13 @@ img[alt="bkimg"]{
     position: relative;
 }
 .card.first-year-img{
-    background-image: url('../images/DSC00339.webp');
+    background-image: url('../images/2023/DSC00339.webp');
 }
 .card.second-year-img{
-    background-image: url('../images/DSC03496.webp');
+    background-image: url('../images/2024/DSC03887.webp');
+}
+.card.third-year-img{
+    background-image: url('../images/2025/DSC07469.webp');
 }
 .card:hover{
     transform: scale(clamp(1, 1.02, 1.05));
