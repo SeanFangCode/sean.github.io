@@ -13,12 +13,17 @@ function updateImageUrls() {
         let isPortrait = img.getAttribute('data-portrait') === 'true';
         
         // If not explicitly marked, detect orientation after image loads
-        if (!img.hasAttribute('data-portrait')) {
+        if (!img.hasAttribute('data-portrait') && !img.hasAttribute('data-cf-checked')) {
             img.onload = function() {
+                // Only run orientation detection once
+                if (this.hasAttribute('data-cf-checked')) return;
+                
                 const aspectRatio = this.naturalWidth / this.naturalHeight;
-                isPortrait = aspectRatio < 1; // Height > Width = portrait
-                if (isPortrait) {
+                if (aspectRatio < 1) { // Height > Width = portrait
+                    this.setAttribute('data-cf-checked', 'true');
                     this.src = getCfImageUrl(originalPath, true);
+                } else {
+                    this.setAttribute('data-cf-checked', 'true');
                 }
             };
         }
