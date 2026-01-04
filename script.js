@@ -1,8 +1,8 @@
 // Cloudflare Image Transformation helper
 function getCfImageUrl(originalPath, isPortrait = false) {
     const isMobile = window.innerWidth < 768;
-    const width = isMobile ? 640 : 1920;
-    const dimension = isPortrait ? `height=${width}` : `width=${width}`;
+    const size = isMobile ? 640 : 1920;
+    const dimension = isPortrait ? `height=${size}` : `width=${size}`;
     return `/cdn-cgi/image/${dimension},quality=80,format=webp/${originalPath}`;
 }
 
@@ -20,9 +20,11 @@ function updateImageUrls() {
                 
                 const aspectRatio = this.naturalWidth / this.naturalHeight;
                 if (aspectRatio < 1) { // Height > Width = portrait
+                    this.setAttribute('data-portrait', 'true');
                     this.setAttribute('data-cf-checked', 'true');
                     this.src = getCfImageUrl(originalPath, true);
                 } else {
+                    this.setAttribute('data-portrait', 'false');
                     this.setAttribute('data-cf-checked', 'true');
                 }
             };
