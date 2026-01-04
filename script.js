@@ -10,12 +10,31 @@ function getCfImageUrl(originalPath, isPortrait = false) {
 function updateImageUrls() {
     document.querySelectorAll('img[data-cf-src]').forEach(img => {
         const originalPath = img.getAttribute('data-cf-src');
-        const isPortrait = img.getAttribute('data-portrait') === 'true';
+        let isPortrait = img.getAttribute('data-portrait') === 'true';
+        
+        // If not explicitly marked, detect orientation after image loads
+        if (!img.hasAttribute('data-portrait')) {
+            img.onload = function() {
+                const aspectRatio = this.naturalWidth / this.naturalHeight;
+                isPortrait = aspectRatio < 1; // Height > Width = portrait
+                if (isPortrait) {
+                    this.src = getCfImageUrl(originalPath, true);
+                }
+            };
+        }
+        
         img.src = getCfImageUrl(originalPath, isPortrait);
     });
 }
 
-// Handle window resize
+// Set images immediately (before DOMContentLoaded) for faster loading
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateImageUrls);
+} else {
+    updateImageUrls();
+}
+
+// Handle window resize with debounce
 let resizeTimer;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
@@ -39,9 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
             sectionBody.dispatchEvent(contentLoadedEvent);
         })
         .catch(error => console.error('Error loading content:', error));
-    
-    // Update initial images
-    updateImageUrls();
 });
 document.addEventListener("DOMContentLoaded", () => {
     const video = document.getElementById("background-video");
@@ -84,6 +100,9 @@ function loadSection(event) {
         .then(data => {
             // Insert the fetched content into the content container
             document.getElementById('section-body').innerHTML = data;
+            
+            // Update image URLs after new content is loaded
+            updateImageUrls();
         })
         .catch(error => {
             console.error('Error loading section:', error);
