@@ -14,7 +14,7 @@ function updateImageUrls() {
         
         // If not explicitly marked, detect orientation after image loads
         if (!img.hasAttribute('data-portrait') && !img.hasAttribute('data-cf-checked')) {
-            img.onload = function() {
+            const detectOrientation = function() {
                 // Only run orientation detection once
                 if (this.hasAttribute('data-cf-checked')) return;
                 
@@ -26,6 +26,14 @@ function updateImageUrls() {
                     this.setAttribute('data-cf-checked', 'true');
                 }
             };
+            
+            // If image is already loaded, detect immediately
+            if (img.complete && img.naturalWidth > 0) {
+                detectOrientation.call(img);
+            } else {
+                // Otherwise, wait for load
+                img.onload = detectOrientation;
+            }
         }
         
         img.src = getCfImageUrl(originalPath, isPortrait);
@@ -229,7 +237,15 @@ function openLightbox(imgElement) {
     const modal = document.getElementById('lightbox-modal');
     const lightboxImage = modal.querySelector('.lightbox-image');
     const originalPath = imgElement.getAttribute('data-cf-src');
-    const isPortrait = imgElement.getAttribute('data-portrait') === 'true';
+    
+    // Determine if portrait - check data attribute first, then detect from image
+    let isPortrait = imgElement.getAttribute('data-portrait') === 'true';
+    
+    // If not explicitly marked, detect from the actual image dimensions
+    if (!imgElement.hasAttribute('data-portrait') && imgElement.complete && imgElement.naturalWidth > 0) {
+        const aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
+        isPortrait = aspectRatio < 1; // Height > Width = portrait
+    }
     
     // Use the same URL as the masonry images (with Cloudflare resizing)
     const imageUrl = getCfImageUrl(originalPath, isPortrait);
