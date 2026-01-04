@@ -26,6 +26,7 @@ function updateImageUrls() {
                 } else {
                     this.setAttribute('data-portrait', 'false');
                     this.setAttribute('data-cf-checked', 'true');
+                    this.src = getCfImageUrl(originalPath, false);
                 }
             };
             
@@ -35,10 +36,13 @@ function updateImageUrls() {
             } else {
                 // Otherwise, wait for load
                 img.onload = detectOrientation;
+                // Set initial URL with landscape assumption
+                img.src = getCfImageUrl(originalPath, false);
             }
+        } else {
+            // Image already has data-portrait attribute (either detected or explicit)
+            img.src = getCfImageUrl(originalPath, isPortrait);
         }
-        
-        img.src = getCfImageUrl(originalPath, isPortrait);
     });
     
     // Initialize lightbox listeners for all clickable images
