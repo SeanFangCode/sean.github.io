@@ -1,7 +1,7 @@
 // Cloudflare Image Transformation helper
 function getCfImageUrl(originalPath, isPortrait = false) {
     const isMobile = window.innerWidth < 768;
-    const size = isMobile ? 640 : 1920;
+    const size = isMobile ? 1920 : 2400;
     const dimension = isPortrait ? `height=${size}` : `width=${size}`;
     return `/cdn-cgi/image/${dimension},quality=80,format=webp/${originalPath}`;
 }
