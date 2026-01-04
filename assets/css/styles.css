@@ -627,6 +627,136 @@ img[alt="ftlink"]{
 
 }
 
+/* -------------------- LIGHTBOX MODAL -------------------- */
+.lightbox-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.lightbox-modal.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.lightbox-container {
+    position: relative;
+    width: 90%;
+    max-width: 90vh;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    font-size: 3rem;
+    color: #ffffff;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 1001;
+}
+
+.lightbox-close:hover {
+    color: #EAE5D5;
+}
+
+.lightbox-nav {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    z-index: 1001;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background-color: #ffffff;
+    color: #1E1E1E;
+}
+
+.lightbox-prev:disabled,
+.lightbox-next:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Make clickable images have a pointer cursor */
+.masonry-img,
+img[data-cf-src]:not(.background-img img) {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.masonry-img:hover,
+img[data-cf-src]:not(.background-img img):hover {
+    opacity: 0.8;
+}
+
+@media screen and (max-width: 768px) {
+    .lightbox-container {
+        width: 95%;
+        max-width: 100%;
+        height: 80vh;
+    }
+
+    .lightbox-close {
+        top: 15px;
+        right: 20px;
+        font-size: 2rem;
+    }
+
+    .lightbox-nav {
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+        padding: 0.5rem 1rem;
+        font-size: 1.2rem;
+    }
+}
+
 
 
 

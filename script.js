@@ -30,6 +30,9 @@ function updateImageUrls() {
         
         img.src = getCfImageUrl(originalPath, isPortrait);
     });
+    
+    // Initialize lightbox listeners for all clickable images
+    initLightboxListeners();
 }
 
 // Set images immediately (before DOMContentLoaded) for faster loading
@@ -201,6 +204,106 @@ function updateCoordinates() {
         updateCoordinates();
     }, phaseDuration);
 }
+
+// ==================== LIGHTBOX FUNCTIONALITY ====================
+let allClickableImages = [];
+let currentLightboxIndex = 0;
+
+function initLightboxListeners() {
+    // Get all clickable images (masonry images and about pictures, but not background images)
+    allClickableImages = Array.from(document.querySelectorAll('.masonry-img, #about-pic'));
+    
+    // Remove duplicate listeners by clearing and re-adding
+    allClickableImages.forEach((img, index) => {
+        // Remove old listener if exists
+        const newImg = img.cloneNode(true);
+        img.parentNode.replaceChild(newImg, img);
+        
+        // Add click listener
+        newImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentLightboxIndex = allClickableImages.indexOf(img);
+            openLightbox(newImg);
+        });
+        
+        // Update reference in array
+        allClickableImages[index] = newImg;
+    });
+}
+
+function openLightbox(imgElement) {
+    const modal = document.getElementById('lightbox-modal');
+    const lightboxImage = modal.querySelector('.lightbox-image');
+    const originalPath = imgElement.getAttribute('data-cf-src');
+    
+    // Get full quality image URL (remove Cloudflare width/height constraints for full display)
+    const fullImageUrl = `/cdn-cgi/image/quality=85,format=webp/${originalPath}`;
+    lightboxImage.src = fullImageUrl;
+    lightboxImage.setAttribute('data-original-path', originalPath);
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    updateLightboxNavigation();
+}
+
+function closeLightbox() {
+    const modal = document.getElementById('lightbox-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function nextImage() {
+    if (currentLightboxIndex < allClickableImages.length - 1) {
+        currentLightboxIndex++;
+        openLightbox(allClickableImages[currentLightboxIndex]);
+    }
+}
+
+function previousImage() {
+    if (currentLightboxIndex > 0) {
+        currentLightboxIndex--;
+        openLightbox(allClickableImages[currentLightboxIndex]);
+    }
+}
+
+function updateLightboxNavigation() {
+    const prevBtn = document.querySelector('.lightbox-prev');
+    const nextBtn = document.querySelector('.lightbox-next');
+    
+    prevBtn.disabled = currentLightboxIndex === 0;
+    nextBtn.disabled = currentLightboxIndex === allClickableImages.length - 1;
+}
+
+// Lightbox event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('lightbox-modal');
+    const closeBtn = document.querySelector('.lightbox-close');
+    const prevBtn = document.querySelector('.lightbox-prev');
+    const nextBtn = document.querySelector('.lightbox-next');
+    
+    // Close lightbox
+    closeBtn.addEventListener('click', closeLightbox);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeLightbox();
+    });
+    
+    // Navigation
+    prevBtn.addEventListener('click', previousImage);
+    nextBtn.addEventListener('click', nextImage);
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!modal.classList.contains('active')) return;
+        
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') previousImage();
+        if (e.key === 'ArrowRight') nextImage();
+    });
+    
+    // Initialize lightbox for initial content
+    initLightboxListeners();
+});
 
 // Start the cycle
 updateCoordinates();
