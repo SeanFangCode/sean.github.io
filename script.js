@@ -1,3 +1,27 @@
+// Cloudflare Image Transformation helper
+function getCfImageUrl(originalPath, isPortrait = false) {
+    const isMobile = window.innerWidth < 768;
+    const width = isMobile ? 640 : 1920;
+    const dimension = isPortrait ? `height=${width}` : `width=${width}`;
+    return `/cdn-cgi/image/${dimension},quality=80,format=webp/${originalPath}`;
+}
+
+// Update image URLs dynamically based on viewport and orientation
+function updateImageUrls() {
+    document.querySelectorAll('img[data-cf-src]').forEach(img => {
+        const originalPath = img.getAttribute('data-cf-src');
+        const isPortrait = img.getAttribute('data-portrait') === 'true';
+        img.src = getCfImageUrl(originalPath, isPortrait);
+    });
+}
+
+// Handle window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateImageUrls, 250);
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch the external HTML file content
     fetch('section-body.html')
@@ -7,11 +31,17 @@ document.addEventListener('DOMContentLoaded', function () {
             const sectionBody = document.querySelector('.section-body');
             sectionBody.innerHTML = data;
 
+            // Update image URLs after content is loaded
+            updateImageUrls();
+
             // Dispatch a custom event to indicate content is loaded
             const contentLoadedEvent = new Event('contentLoaded');
             sectionBody.dispatchEvent(contentLoadedEvent);
         })
         .catch(error => console.error('Error loading content:', error));
+    
+    // Update initial images
+    updateImageUrls();
 });
 document.addEventListener("DOMContentLoaded", () => {
     const video = document.getElementById("background-video");
