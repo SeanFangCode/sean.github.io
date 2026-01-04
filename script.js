@@ -21,8 +21,11 @@ function updateImageUrls() {
                 const isPortraitDetected = aspectRatio < 1;
                 this.setAttribute('data-portrait', isPortraitDetected ? 'true' : 'false');
                 
-                // Update the src after detecting orientation
-                this.src = getCfImageUrl(originalPath, isPortraitDetected);
+                // Only update src if detected as portrait (different from our width assumption)
+                // This avoids reloading landscape images unnecessarily
+                if (isPortraitDetected) {
+                    this.src = getCfImageUrl(originalPath, true);
+                }
             };
             
             // If image is already loaded, detect immediately
