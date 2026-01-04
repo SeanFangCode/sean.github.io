@@ -20,6 +20,9 @@ function updateImageUrls() {
                 const aspectRatio = this.naturalWidth / this.naturalHeight;
                 const isPortraitDetected = aspectRatio < 1;
                 this.setAttribute('data-portrait', isPortraitDetected ? 'true' : 'false');
+                
+                // Update the src after detecting orientation
+                this.src = getCfImageUrl(originalPath, isPortraitDetected);
             };
             
             // If image is already loaded, detect immediately
@@ -28,12 +31,14 @@ function updateImageUrls() {
             } else {
                 // Otherwise, wait for load
                 img.addEventListener('load', detectOrientation, { once: true });
+                // Set initial URL with landscape assumption while waiting
+                img.src = getCfImageUrl(originalPath, false);
             }
+        } else {
+            // Image already has data-portrait attribute (either detected or explicit)
+            const isPortrait = img.getAttribute('data-portrait') === 'true';
+            img.src = getCfImageUrl(originalPath, isPortrait);
         }
-        
-        // Always set src based on current data-portrait attribute (after detection)
-        const isPortrait = img.getAttribute('data-portrait') === 'true';
-        img.src = getCfImageUrl(originalPath, isPortrait);
     });
     
     // Initialize lightbox listeners for all clickable images
