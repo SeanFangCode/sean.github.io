@@ -77,18 +77,20 @@ document.addEventListener("DOMContentLoaded", () => {
     video.playsInline = true;
     video.setAttribute('webkit-playsinline', '');
 
-    // Phones get the lighter 720p encode
-    const isSmallScreen = window.matchMedia('(max-width: 992px)').matches;
-    video.src = isSmallScreen ? video.dataset.srcMobile : video.dataset.src;
-
-    let playBlocked = false;
+    let playPending = false;
     const tryPlay = () => {
+        if (playPending) return;
         const p = video.play();
-        if (p) p.catch(() => { playBlocked = true; }); // e.g. iOS Low Power Mode
+        if (!p) return;
+        playPending = true;
+        // Rejected plays (e.g. iOS Low Power Mode) are retried on the next tick or tap
+        p.catch(() => {}).finally(() => { playPending = false; });
     };
 
+    // iOS allows playback after a tap even when autoplay is blocked
+    document.addEventListener('touchend', tryPlay, { once: true, passive: true });
+
     setInterval(() => {
-        if (playBlocked) return;
         const currentTime = performance.now() % animationDuration; // Current time in the animation loop
 
         if (currentTime <= videoDuration) {

@@ -215,6 +215,10 @@ img[alt="bkimg"]{
     opacity: 0.9;
     object-fit: cover; 
 }
+/* Keeps the first frame visible if iOS blocks or delays playback */
+.background-img video{
+    background: url('../images/Background-poster.webp') center / cover no-repeat;
+}
 @keyframes slide {
     0% {
         transform: translateX(0);
