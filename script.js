@@ -1,66 +1,52 @@
+// Cloudflare image resizing only exists on the live domain. When testing
+// locally (e.g. VS Code Live Server), fall back to the original files.
+const USE_CF_IMAGES = /(^|\.)seanfang\.xyz$/.test(location.hostname);
+
 // Cloudflare Image Transformation helper
-function getCfImageUrl(originalPath, isPortrait = false) {
-    const isMobile = window.innerWidth < 768;
-    const size = isMobile ? 1920 : 2400;
-    const dimension = isPortrait ? `height=${size}` : `width=${size}`;
-    return `/cdn-cgi/image/${dimension},quality=80,format=webp/${originalPath}`;
+function getCfImageUrl(originalPath, width) {
+    if (!USE_CF_IMAGES) return originalPath;
+    return `/cdn-cgi/image/width=${width},quality=80,format=auto/${originalPath}`;
 }
 
-// Update image URLs dynamically based on viewport and orientation
-function updateImageUrls() {
-    document.querySelectorAll('img[data-cf-src]').forEach(img => {
-        const originalPath = img.getAttribute('data-cf-src');
-        
-        // If not explicitly marked, detect orientation
-        if (!img.hasAttribute('data-portrait')) {
-            const detectOrientation = function() {
-                if (this.hasAttribute('data-cf-detected')) return;
-                this.setAttribute('data-cf-detected', 'true');
-                
-                const aspectRatio = this.naturalWidth / this.naturalHeight;
-                const isPortraitDetected = aspectRatio < 1;
-                this.setAttribute('data-portrait', isPortraitDetected ? 'true' : 'false');
-                
-                // Only update src if detected as portrait (different from our width assumption)
-                // This avoids reloading landscape images unnecessarily
-                if (isPortraitDetected) {
-                    this.src = getCfImageUrl(originalPath, true);
-                }
-            };
-            
-            // If image is already loaded, detect immediately
-            if (img.complete && img.naturalWidth > 0) {
-                detectOrientation.call(img);
-            } else {
-                // Otherwise, wait for load
-                img.addEventListener('load', detectOrientation, { once: true });
-                // Set initial URL with landscape assumption while waiting
-                img.src = getCfImageUrl(originalPath, false);
-            }
-        } else {
-            // Image already has data-portrait attribute (either detected or explicit)
-            const isPortrait = img.getAttribute('data-portrait') === 'true';
-            img.src = getCfImageUrl(originalPath, isPortrait);
-        }
+// Turns a hardcoded /cdn-cgi/image/<options>/path URL back into /path
+function stripCfUrl(url) {
+    return url.replace(/\/cdn-cgi\/image\/[^/]+\//g, '/');
+}
+
+// Rewrite the hardcoded Cloudflare URLs in index.html and styles.css for local testing
+function useOriginalImagesLocally() {
+    if (USE_CF_IMAGES) return;
+    document.querySelectorAll('img[src*="/cdn-cgi/image/"]').forEach(img => {
+        img.removeAttribute('srcset');
+        img.src = stripCfUrl(img.getAttribute('src'));
     });
-    
-    // Initialize lightbox listeners for all clickable images
-    initLightboxListeners();
+    document.querySelectorAll('.card').forEach(card => {
+        card.style.backgroundImage = stripCfUrl(getComputedStyle(card).backgroundImage);
+    });
 }
+useOriginalImagesLocally();
 
-// Set images immediately (before DOMContentLoaded) for faster loading
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateImageUrls);
-} else {
-    updateImageUrls();
+const THUMB_WIDTHS = [400, 600, 800, 1200, 1600];
+
+// Give each image a responsive srcset so the browser downloads a thumbnail
+// sized to its rendered width instead of the full-resolution file.
+function updateImageUrls() {
+    document.querySelectorAll('img[data-cf-src]:not([srcset])').forEach(img => {
+        const originalPath = img.getAttribute('data-cf-src');
+        if (!USE_CF_IMAGES) {
+            img.src = originalPath;
+            img.srcset = originalPath; // marks the image as handled
+            return;
+        }
+        img.sizes = img.id === 'about-pic'
+            ? '20rem'
+            : '(min-width: 993px) 33vw, 50vw';
+        img.srcset = THUMB_WIDTHS
+            .map(w => `${getCfImageUrl(originalPath, w)} ${w}w`)
+            .join(', ');
+        img.src = getCfImageUrl(originalPath, 800);
+    });
 }
-
-// Handle window resize with debounce
-let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateImageUrls, 250);
-});
 
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch the external HTML file content
@@ -73,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Update image URLs after content is loaded
             updateImageUrls();
+            useOriginalImagesLocally();
 
             // Dispatch a custom event to indicate content is loaded
             const contentLoadedEvent = new Event('contentLoaded');
@@ -85,12 +72,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const animationDuration = 47000; // Total animation duration in milliseconds
     const videoDuration = 30000; // Video duration in milliseconds
 
+    // iOS goes fullscreen when play() is called unless these are set
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('webkit-playsinline', '');
+
+    // Phones get the lighter 720p encode
+    const isSmallScreen = window.matchMedia('(max-width: 992px)').matches;
+    video.src = isSmallScreen ? video.dataset.srcMobile : video.dataset.src;
+
+    let playBlocked = false;
+    const tryPlay = () => {
+        const p = video.play();
+        if (p) p.catch(() => { playBlocked = true; }); // e.g. iOS Low Power Mode
+    };
+
     setInterval(() => {
+        if (playBlocked) return;
         const currentTime = performance.now() % animationDuration; // Current time in the animation loop
 
         if (currentTime <= videoDuration) {
             // Play the video during the first 30 seconds
-            if (video.paused) video.play();
+            if (video.paused) tryPlay();
         } else {
             // Pause the video during the remaining 17 seconds
             if (!video.paused) video.pause();
@@ -220,42 +223,23 @@ function updateCoordinates() {
 
 // ==================== LIGHTBOX FUNCTIONALITY ====================
 
-function initLightboxListeners() {
-    // Get all clickable images (masonry images and about pictures, but not background images)
-    const clickableImages = Array.from(document.querySelectorAll('.masonry-img, #about-pic'));
-    
-    // Remove duplicate listeners by clearing and re-adding
-    clickableImages.forEach((img, index) => {
-        // Remove old listener if exists
-        const newImg = img.cloneNode(true);
-        img.parentNode.replaceChild(newImg, img);
-        
-        // Add click listener
-        newImg.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openLightbox(newImg);
-        });
-    });
-}
-
 function openLightbox(imgElement) {
     const modal = document.getElementById('lightbox-modal');
     const lightboxImage = modal.querySelector('.lightbox-image');
     const originalPath = imgElement.getAttribute('data-cf-src');
-    
-    // Determine if portrait - check data attribute first, then detect from image
-    let isPortrait = imgElement.getAttribute('data-portrait') === 'true';
-    
-    // If not explicitly marked, detect from the actual image dimensions
-    if (!imgElement.hasAttribute('data-portrait') && imgElement.complete && imgElement.naturalWidth > 0) {
-        const aspectRatio = imgElement.naturalWidth / imgElement.naturalHeight;
-        isPortrait = aspectRatio < 1; // Height > Width = portrait
-    }
-    
-    // Use the same URL as the masonry images (with Cloudflare resizing)
-    const imageUrl = getCfImageUrl(originalPath, isPortrait);
-    lightboxImage.src = imageUrl;
-    
+
+    // Show the already-loaded thumbnail instantly, then swap in a larger version
+    lightboxImage.src = imgElement.currentSrc || imgElement.src;
+    const w = Number(imgElement.getAttribute('width')) || imgElement.naturalWidth || 1;
+    const h = Number(imgElement.getAttribute('height')) || imgElement.naturalHeight || 1;
+    const target = Math.ceil(Math.max(window.innerWidth, window.innerHeight) * Math.min(window.devicePixelRatio || 1, 2));
+    const fullWidth = Math.min(h > w ? Math.round(target * w / h) : target, 2400);
+    const full = new Image();
+    full.onload = () => {
+        if (modal.classList.contains('active')) lightboxImage.src = full.src;
+    };
+    full.src = getCfImageUrl(originalPath, fullWidth);
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -284,8 +268,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') closeLightbox();
     });
     
-    // Initialize lightbox for initial content
-    initLightboxListeners();
+    // One delegated listener covers images loaded later via fetch
+    document.addEventListener('click', (e) => {
+        const img = e.target.closest('.masonry-img, #about-pic');
+        if (img) openLightbox(img);
+    });
 });
 
 // Start the cycle

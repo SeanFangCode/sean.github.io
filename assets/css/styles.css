@@ -319,13 +319,13 @@ img[alt="bkimg"]{
     position: relative;
 }
 .card.first-year-img{
-    background-image: url('../images/2023/DSC00339.webp');
+    background-image: url('/cdn-cgi/image/width=1600,quality=80,format=auto/assets/images/2023/DSC00339.webp');
 }
 .card.second-year-img{
-    background-image: url('../images/2024/DSC03887.webp');
+    background-image: url('/cdn-cgi/image/width=1600,quality=80,format=auto/assets/images/2024/DSC03887.webp');
 }
 .card.third-year-img{
-    background-image: url('../images/2025/DSC07469.webp');
+    background-image: url('/cdn-cgi/image/width=1600,quality=80,format=auto/assets/images/2025/DSC07469.webp');
 }
 .card:hover{
     transform: scale(clamp(1, 1.02, 1.05));
@@ -362,6 +362,7 @@ img[alt="bkimg"]{
 }
 #about-pic{
     width:20rem;
+    height: auto;
     border-radius: 3rem;
     box-shadow: 0px 2px 15px 4px rgba(126,126,126,0.7);
 }
@@ -511,9 +512,13 @@ img[alt="ftlink"]{
 }
 .masonry-item {
     margin-bottom: 1rem;
+    break-inside: avoid;
 }
 .masonry-img {
     width: 100%;
+    height: auto;
+    display: block;
+    background-color: #1E1E1E;
     border-radius: 1rem;
 }
 /* -------------------- MEDIA QUERIES -------------------- */
